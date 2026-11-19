@@ -1,27 +1,59 @@
 name: CI-CD Reserva Hotel
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
 jobs:
   ci:
     runs-on: ubuntu-latest
+
     steps:
       - name: Obtener codigo
         uses: actions/checkout@v4
+
       - name: Preparar entorno Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24.15.0'
+
       - name: Instalar dependencias
         run: npm ci
+
       - name: Ejecutar pruebas
         run: npm test -- --watch=false
+
       - name: Generar build
         run: npm run build
+
       - name: Guardar build como artefacto
         uses: actions/upload-artifact@v4
         with:
           name: app-build
           path: dist/reserva-hotel/browser/
+
+  cd:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://reservas-xavier.site.je
+
+    steps:
+      - name: Descargar build validado
+        uses: actions/download-artifact@v5
+        with:
+          name: app-build
+          path: publicar
+
+      - name: Publicar en el servidor por FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./publicar/
+          server-dir: /htdocs/
