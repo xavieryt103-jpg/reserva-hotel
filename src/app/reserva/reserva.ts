@@ -10,11 +10,15 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class Reserva {
   enviado = false;
 
-  formulario = new FormGroup({
-    nombre: new FormControl('', Validators.required),
-    email: new FormControl('', Validators.required),
+    formulario = new FormGroup({
+    nombre: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    email: new FormControl('', [Validators.required, Validators.email]),
     habitacion: new FormControl('', Validators.required),
-    noches: new FormControl<number | null>(null, Validators.required)
+    noches: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(1),
+      Validators.max(14)
+    ])
   });
 
   reservar() {
