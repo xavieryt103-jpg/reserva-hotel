@@ -1,1 +1,21 @@
-<p>reserva works!</p>
+<h1>Reserva de habitación</h1>
+
+<form [formGroup]="formulario" (ngSubmit)="reservar()">
+  <input type="text" formControlName="nombre" placeholder="Nombre completo">
+  <input type="email" formControlName="email" placeholder="Correo">
+
+  <select formControlName="habitacion">
+    <option value="">Tipo de habitación</option>
+    <option value="Simple">Simple</option>
+    <option value="Doble">Doble</option>
+    <option value="Suite">Suite</option>
+  </select>
+
+  <input type="number" formControlName="noches" placeholder="Noches">
+
+  <button type="submit" [disabled]="formulario.invalid">Reservar</button>
+</form>
+
+@if (enviado) {
+  <p>Reserva registrada correctamente.</p>
+}
