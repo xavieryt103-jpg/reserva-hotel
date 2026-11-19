@@ -17,7 +17,7 @@ export class Reserva {
     noches: new FormControl<number | null>(null, [
       Validators.required,
       Validators.min(1),
-      Validators.max(14)
+      Validators.max(30)
     ])
   });
 
